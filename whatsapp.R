@@ -25,12 +25,10 @@ library(wordcloud2)
 
 
 
-chat = rwa_read("/Users/zhangyujing/Desktop/R\ code/test/_chat.txt") %>% 
+chat = rwa_read("./_chat.txt") %>% 
   filter(!is.na(author)) %>%
   mutate(count_character= nchar(text), 
          words= nchar(gsub('[^ ]+', '',text))+1)
-
-plain_chat<-rwa_read("/Users/zhangyujing/Desktop/R\ code/test/_chat.txt") %>% mutate(count_character= nchar(text), words= nchar(gsub('[^ ]+', '',text))+1)
 
 to_remove = c(stopwords(language = "en"), "media","message","deleted","https","www",
                "omitted","ref","Yeah","Yea","yeah","ahahaha","yea","ok","No","no","yes","Ok",
@@ -58,12 +56,12 @@ chat %>%
   ggtitle("Number of messages")
 
 
-emoji_data <- rwhatsapp::emojis %>% # data built into package
+emoji_data = rwhatsapp::emojis %>% # data built into package
   mutate(hex_runes1 = gsub("\\s[[:alnum:]]+", "", hex_runes)) %>% # ignore combined emojis
   mutate(emoji_url = paste0("https://abs.twimg.com/emoji/v2/72x72/", 
                             tolower(hex_runes1), ".png"))
 
-top_chatters<-chat %>% group_by(author) %>% summarise(words=sum(words)) %>%
+top_chatters = chat %>% group_by(author) %>% summarise(words=sum(words)) %>%
   top_n(6) %>% pull(author)
 chat %>%
   unnest(emoji) %>%
@@ -80,7 +78,7 @@ chat %>%
   facet_wrap(~author, ncol = 3, scales = "free_y") +
   ggtitle("Most often used emojis") 
 
-chatdata=chat
+chatdata = chat
 chatdata %>%
   unnest_tokens(input = text,
                 output = word) %>%
@@ -124,14 +122,14 @@ chat %>%
   coord_flip()
 
 
-chat_clean <- chat %>%
+chat_clean = chat %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words)
 
-chat_clean <- chat_clean %>%
+chat_clean = chat_clean %>%
   na.omit(chat_clean)
 
-chat_clean <- chat_clean %>%
+chat_clean = chat_clean %>%
   filter(!word %in% to_remove)
 
 chat_clean %>%
